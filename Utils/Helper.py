@@ -13,3 +13,9 @@ def validate_fields(data, fields):
             return False
 
     return True
+
+
+def format_timestamp(timestamp):
+    formatted_time = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    
+    return formatted_time
