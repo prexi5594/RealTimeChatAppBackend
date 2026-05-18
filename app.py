@@ -21,10 +21,6 @@ def create_app():
     db.init_app(app)
 
     
-    from models.user_model import User
-    from models.room_model import Room
-    from models.message_model import Message
-
   
     from routes.auth_routes import auth_bp
     from routes.room_routes import room_bp
