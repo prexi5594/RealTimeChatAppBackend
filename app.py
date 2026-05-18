@@ -8,7 +8,7 @@ from db import db
 def create_app():
     app = Flask(__name__)
 
-    # Load configuration
+    # Load config
     app.config.from_object(Config)
 
     # Enable CORS
@@ -17,11 +17,12 @@ def create_app():
     # Initialize database
     db.init_app(app)
 
-    # Import routes (inside function to avoid circular imports)
+    # Import routes
     from routes.auth_routes import auth_bp
     from routes.room_routes import room_bp
     from routes.message_routes import message_bp
 
+    # Register blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(room_bp)
     app.register_blueprint(message_bp)
@@ -30,7 +31,6 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    # Test route
     @app.route("/")
     def home():
         return {"message": "Backend is running successfully"}
