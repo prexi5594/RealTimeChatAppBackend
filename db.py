@@ -5,6 +5,7 @@ db = SQLAlchemy()
 
 
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(
@@ -16,3 +17,5 @@ class User(db.Model):
         db.String(300),
         nullable=False
     )
+
+
