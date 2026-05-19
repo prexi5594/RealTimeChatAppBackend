@@ -16,10 +16,11 @@ def send_message():
     content = data.get('content')
 
     new_message = Message(
-        username=username,
-        room=room,
-        content=content
-    )
+    user_id=1,
+    room_id=1,
+    message=content
+)
+    
 
     db.session.add(new_message)
     db.session.commit()
@@ -31,7 +32,7 @@ def send_message():
 @message_bp.route('/messages/<room>', methods=['GET'])
 def get_messages(room):
 
-    messages = Message.query.filter_by(room=room).all()
+    messages = Message.query.filter_by(room_id=room).all()
 
     message_list = []
 
