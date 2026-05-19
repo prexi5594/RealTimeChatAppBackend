@@ -10,8 +10,10 @@ class Message(db.Model):
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    user = db.relationship('User', backref='messages')
+    user = db.relationship('User', backref='messages', overlaps="messages")
     room = db.relationship('Room', backref='messages')
 
     def __repr__(self):
         return f"<Message {self.id} by User {self.user_id}>"
+    
+    
