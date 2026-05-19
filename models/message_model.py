@@ -6,7 +6,7 @@ class Message(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
