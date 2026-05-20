@@ -1,5 +1,4 @@
-from db import db
-
+from extensions import db
 
 class Room(db.Model):
     __tablename__ = "rooms"

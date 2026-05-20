@@ -1,5 +1,10 @@
 from flask import Blueprint, request, jsonify
+<<<<<<< HEAD
 from db import db
+=======
+
+from extensions import db
+>>>>>>> 422b5bc (final changes)
 from models.room_model import Room
 
 room_bp = Blueprint('rooms', __name__)
@@ -18,6 +23,10 @@ def create_room():
     return jsonify({"message": "Room created successfully"}), 201
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 422b5bc (final changes)
 @room_bp.route('/rooms', methods=['GET'])
 def get_rooms():
     rooms = Room.query.all()

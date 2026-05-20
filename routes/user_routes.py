@@ -3,11 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from models.user_model import User
 
-# Create Blueprint
 user_bp = Blueprint("users", __name__)
 
-
-# GET ALL USERS
 @user_bp.route("/users", methods=["GET"])
 @jwt_required()
 def get_users():
@@ -26,7 +23,6 @@ def get_users():
     return jsonify(user_list), 200
 
 
-# GET SINGLE USER
 @user_bp.route("/users/<int:id>", methods=["GET"])
 @jwt_required()
 def get_user(id):
