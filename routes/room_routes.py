@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify
 from db import db
 from models.room_model import Room
 
-room_bp = Blueprint('rooms', __name__)
+room_bp = Blueprint('rooms', __name__, url_prefix="/rooms")
 
-@room_bp.route('/rooms', methods=['POST'])
+@room_bp.route("", methods=['POST'])
 def create_room():
     data = request.get_json()
     room_name = data.get('name')
@@ -18,7 +18,7 @@ def create_room():
     return jsonify({"message": "Room created successfully"}), 201
 
 
-@room_bp.route('/rooms', methods=['GET'])
+@room_bp.route("", methods=['GET'])
 def get_rooms():
     rooms = Room.query.all()
 

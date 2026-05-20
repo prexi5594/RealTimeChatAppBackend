@@ -1,17 +1,20 @@
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from datetime import timedelta
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    # Use a safe fallback string for local development if environment variables are missing
+    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-fallback-secret-key-12345")
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "dev-fallback-jwt-key-67890")
+    
+    # SQLite fallback for local development; Render should inject a real PostgreSQL URL
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///chat.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "dev-secret-change-this")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     
-    # EMAIL (GMAIL)
-    MAIL_SERVER = "smtp.gmail.com"
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USERNAME = "moraraprexidazie@gmail.com"
-    MAIL_PASSWORD = "awplfdnqvkcbzycq"
+    # Mail configurations (Safe defaults)
+    MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
+    MAIL_PORT = int(os.environ.get("MAIL_PORT", 587))
+    MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "True") == "True"
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
