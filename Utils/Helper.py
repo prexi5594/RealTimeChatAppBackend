@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 from datetime import datetime
-import bcrypt
 
 # Validate request fields
-=======
->>>>>>> 422b5bc (final changes)
 
 def validate_fields(data, fields):
 
