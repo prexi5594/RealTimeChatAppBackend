@@ -8,8 +8,6 @@ class Message(db.Model):
 
     message = db.Column(db.Text, nullable=False)
     username = db.Column(db.String(100), nullable=False)
-
-    # THIS IS WHAT YOU WERE MISSING / BROKEN
     room_id = db.Column(db.Integer, db.ForeignKey("rooms.id"), nullable=False)
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)

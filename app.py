@@ -1,41 +1,51 @@
-
 from flask import Flask
 from flask_cors import CORS
+from extensions import db
+
+from routes.auth_routes import auth_bp
+from routes.room_routes import room_bp
+from routes.message_routes import message_bp
+
+
 def create_app():
     app = Flask(__name__)
 
-    CORS(
-        app,
-        resources={r"/*": {
-            "origins": [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173"
-            ]
-        }},
-        supports_credentials=True,
-        allow_headers=["Content-Type", "Authorization"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    )
-    from routes.auth_routes import auth_bp
-    from routes.room_routes import room_bp
-    from routes.message_routes import message_bp
+    # DB CONFIG
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    
+    # INIT DB
+    db.init_app(app)
+
+    # CORS
+    CORS(app)
+
+    # BLUEPRINTS
     app.register_blueprint(auth_bp)
     app.register_blueprint(room_bp)
     app.register_blueprint(message_bp)
 
-
-    
+    # HOME ROUTE
     @app.route("/")
     def home():
-        return {"message": "HEY CHAT"}
+        return {"status": "running"}
 
-    return app  
+    # CREATE TABLES + SEED ROOMS
+    with app.app_context():
+        from models.room_model import Room
+
+        db.create_all()
+
+        if not Room.query.first():
+            db.session.add(Room(name="Sports"))
+            db.session.add(Room(name="Politics"))
+            db.session.add(Room(name="Fashion"))
+            db.session.commit()
+
+    return app
+
 
 app = create_app()
 
-from models.room_model import Room 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
