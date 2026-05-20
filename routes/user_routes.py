@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from models.user_model import User
 
@@ -8,6 +9,7 @@ user_bp = Blueprint("users", __name__)
 
 # GET ALL USERS
 @user_bp.route("/users", methods=["GET"])
+@jwt_required()
 def get_users():
 
     users = User.query.all()
@@ -26,13 +28,14 @@ def get_users():
 
 # GET SINGLE USER
 @user_bp.route("/users/<int:id>", methods=["GET"])
+@jwt_required()
 def get_user(id):
 
     user = User.query.get(id)
 
     if not user:
         return jsonify({
-            "message": "User not found"
+            "error": "User not found"
         }), 404
 
     return jsonify({

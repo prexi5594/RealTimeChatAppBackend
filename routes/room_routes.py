@@ -1,43 +1,28 @@
 from flask import Blueprint, request, jsonify
-
 from db import db
 from models.room_model import Room
 
 room_bp = Blueprint('rooms', __name__)
 
-# Create room
 @room_bp.route('/rooms', methods=['POST'])
 def create_room():
-
     data = request.get_json()
-
     room_name = data.get('name')
 
-    existing_room = Room.query.filter_by(name=room_name).first()
-
-    if existing_room:
+    if Room.query.filter_by(name=room_name).first():
         return jsonify({"message": "Room already exists"}), 400
 
-    new_room = Room(name=room_name)
-
-    db.session.add(new_room)
+    db.session.add(Room(name=room_name))
     db.session.commit()
 
-    return jsonify({"message": "Room created successfully"})
+    return jsonify({"message": "Room created successfully"}), 201
 
 
-# Get all rooms
 @room_bp.route('/rooms', methods=['GET'])
 def get_rooms():
-
     rooms = Room.query.all()
 
-    room_list = []
-
-    for room in rooms:
-        room_list.append({
-            "id": room.id,
-            "name": room.name
-        })
-
-    return jsonify(room_list)
+    return jsonify([
+        {"id": r.id, "name": r.name}
+        for r in rooms
+    ]), 200

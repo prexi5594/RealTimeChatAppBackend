@@ -1,4 +1,5 @@
 from datetime import datetime
+import bcrypt
 
 # Validate request fields
 
@@ -19,3 +20,9 @@ def format_timestamp(timestamp):
     formatted_time = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     
     return formatted_time
+
+def hash_password(password):
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+def check_password(password, hashed):
+    return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))
