@@ -1,74 +1,58 @@
 from flask import Blueprint, request, jsonify
 from db import db
 from models.message_model import Message
-from models.room_model import Room
 
 message_bp = Blueprint("messages", __name__)
 
-
 # =========================
-# SEND MESSAGE
+# SEND MESSAGE (FIXED)
 # =========================
 @message_bp.route("/messages", methods=["POST"])
 def send_message():
-
     try:
         data = request.get_json()
 
-        username = data.get("username")
-        room_name = data.get("room")
-        text = data.get("text")
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
+        text = data.get("message")
 
-        if not username or not room_name or not text:
+        if not room_id or not text:
             return jsonify({"error": "Missing fields"}), 400
 
-        # find room by name
-        room = Room.query.filter_by(name=room_name).first()
-
-        if not room:
-            return jsonify({"error": "Room not found"}), 404
-
         new_message = Message(
-            user_id=1,  # temporary (no auth yet)
-            room_id=room.id,
+            user_id=user_id if user_id else 1,
+            room_id=room_id,
             message=text
         )
 
         db.session.add(new_message)
         db.session.commit()
 
-        return jsonify({"message": "Message sent successfully"}), 201
+        return jsonify({"message": "Message sent"}), 201
 
     except Exception as e:
-        print("SEND ERROR:", str(e))
         return jsonify({"error": str(e)}), 500
 
 
 # =========================
-# GET MESSAGES
+# GET MESSAGES (FIXED)
 # =========================
 @message_bp.route("/messages", methods=["GET"])
 def get_messages():
+    room_id = request.args.get("room")
 
-    room_name = request.args.get("room")
-
-    if not room_name:
+    if not room_id:
         return jsonify([]), 200
 
-    room = Room.query.filter_by(name=room_name).first()
-
-    if not room:
-        return jsonify([]), 200
-
-    messages = Message.query.filter_by(room_id=room.id).all()
+    messages = Message.query.filter_by(room_id=room_id).all()
 
     return jsonify([
         {
             "id": m.id,
-            "username": "User",
-            "room": room_name,
+            "username": f"User {m.user_id}",
+            "room_id": m.room_id,
             "content": m.message,
-            "timestamp": m.timestamp
+            "timestamp": str(m.timestamp)
         }
         for m in messages
     ]), 200
