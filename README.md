@@ -30,17 +30,15 @@ backend/
 ├── requirements.txt
 ├── .gitignore
 │
-├── database/
+├── instance/
 │   └── chat.db
 │
 ├── models/
-│   ├── __init__.py
 │   ├── user_model.py
 │   ├── room_model.py
 │   └── message_model.py
 │
 ├── routes/
-│   ├── __init__.py
 │   ├── auth_routes.py
 │   ├── room_routes.py
 │   └── message_routes.py
@@ -57,7 +55,6 @@ backend/
 
 Default rooms:
 
-- General
 - Sports
 . Fashion
 . politics

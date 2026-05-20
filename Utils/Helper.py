@@ -1,7 +1,4 @@
 
-
-# Validate request fields
-
 def validate_fields(data, fields):
 
     for field in fields:
