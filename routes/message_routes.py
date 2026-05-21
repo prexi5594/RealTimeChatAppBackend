@@ -6,14 +6,13 @@ from extensions import db
 message_bp = Blueprint("messages", __name__, url_prefix="/messages")
 
 
-# =====================
 # SEND MESSAGE
-# =====================
+
 @message_bp.route("", methods=["POST"])
 def send_message():
     data = request.get_json()
 
-    print("📩 RECEIVED:", data)
+    print(" RECEIVED:", data)
 
     message = data.get("message")
     username = data.get("username")
@@ -39,9 +38,9 @@ def send_message():
     return jsonify({"status": "sent"}), 201
 
 
-# =====================
+
 # GET MESSAGES
-# =====================
+
 @message_bp.route("/<room_name>", methods=["GET"])
 def get_messages(room_name):
 

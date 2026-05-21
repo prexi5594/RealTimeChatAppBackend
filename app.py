@@ -10,27 +10,27 @@ from routes.message_routes import message_bp
 def create_app():
     app = Flask(__name__)
 
-    # DB CONFIG
+    
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # INIT DB
+    
     db.init_app(app)
 
-    # CORS
+    
     CORS(app)
 
-    # BLUEPRINTS
+  
     app.register_blueprint(auth_bp)
     app.register_blueprint(room_bp)
     app.register_blueprint(message_bp)
 
-    # HOME ROUTE
+   
     @app.route("/")
     def home():
         return {"status": "running"}
 
-    # CREATE TABLES + SEED ROOMS
+   
     with app.app_context():
         from models.room_model import Room
 
