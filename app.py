@@ -1,51 +1,21 @@
 from flask import Flask
-from flask_cors import CORS
-from extensions import db
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
-from routes.auth_routes import auth_bp
-from routes.room_routes import room_bp
-from routes.message_routes import message_bp
+app = Flask(__name__)
 
+app.config["JWT_SECRET_KEY"] = "super-secret-key"
 
-def create_app():
-    app = Flask(__name__)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
-    
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///chat.db"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
 
-    
-    db.init_app(app)
+jwt = JWTManager(app)
 
-    
-    CORS(app)
-
-  
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(room_bp)
-    app.register_blueprint(message_bp)
-
-   
-    @app.route("/")
-    def home():
-        return {"status": "running"}
-
-   
-    with app.app_context():
-        from models.room_model import Room
-
-        db.create_all()
-
-        if not Room.query.first():
-            db.session.add(Room(name="Sports"))
-            db.session.add(Room(name="Politics"))
-            db.session.add(Room(name="Fashion"))
-            db.session.commit()
-
-    return app
-
-
-app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(
+        debug=True,
+        host="0.0.0.0",
+        port=5000
+    )

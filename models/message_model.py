@@ -1,16 +1,48 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone
+
 
 class Message(db.Model):
     __tablename__ = "messages"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
-    message = db.Column(db.Text, nullable=False)
-    username = db.Column(db.String(100), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey("rooms.id"), nullable=False)
+    content = db.Column(
+        db.Text,
+        nullable=False
+    )
 
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
 
-    def __repr__(self):
-        return f"<Message {self.message}>"
+    room_id = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    # =========================
+    # SOFT DELETE
+    # =========================
+    is_deleted = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    # =========================
+    # REPORT SYSTEM
+    # =========================
+    is_reported = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc)
+    )
