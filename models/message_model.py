@@ -1,5 +1,6 @@
 from extensions import db
 from datetime import datetime, timezone
+is_deleted = db.Column(db.Boolean, default=False)
 
 
 class Message(db.Model):

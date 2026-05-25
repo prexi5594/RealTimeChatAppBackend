@@ -56,7 +56,8 @@ def get_messages(room_name):
             "id": m.id,
             "message": m.message,
             "username": m.username,
-            "timestamp": m.timestamp.isoformat()
+            "timestamp": m.timestamp.isoformat(),
+            "is_deleted": m.is_deleted
         }
         for m in messages
     ]), 200
