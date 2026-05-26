@@ -47,6 +47,16 @@ mail = Mail(app)
 
 # ===== SIMPLE IN-MEMORY STORAGE =====
 users = []
+users.append({
+    "email": "qchatadmin@gmail.com",
+    "password": "RVP@2026",
+    "username": "Admin",
+    "is_verified": True,
+    "otp": None,
+    "role": "admin"
+})
+
+
 messages = []
 rooms = [] 
 
@@ -80,7 +90,8 @@ def register():
         "password": password,
         "username": username,
         "is_verified": False,
-        "otp": otp_code
+        "otp": otp_code,
+        "role": "user"
     })
 
     try:
@@ -141,7 +152,8 @@ def login():
                 "message": "Login successful",
                 "user": {
                     "email": email,
-                     "username": user["username"]
+                    "username": user["username"],
+                    "role": user.get("role", "user")
                 }
             }), 200
 
