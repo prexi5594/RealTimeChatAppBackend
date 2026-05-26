@@ -61,3 +61,19 @@ def get_messages(room_name):
         }
         for m in messages
     ]), 200
+   
+   
+    # SOFT DELETE MESSAGE
+@message_bp.route("/<int:message_id>", methods=["PATCH"])
+def delete_message(message_id):
+    message = Message.query.get(message_id)
+
+    if not message:
+        return jsonify({"error": "Message not found"}), 404
+
+    message.is_deleted = True
+    message.message = "Message deleted"
+
+    db.session.commit()
+
+    return jsonify({"status": "deleted"}), 200
