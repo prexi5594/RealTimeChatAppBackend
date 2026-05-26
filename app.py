@@ -6,11 +6,14 @@ from datetime import datetime, timedelta
 from flask_cors import CORS
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
+from routes.admin_routes import admin_bp
 
 # Load environment variables from your local .env file
 load_dotenv()
 
 app = Flask(__name__)
+
+app.register_blueprint(admin_bp)
 
 # ===== CORS CONFIGURATION =====
 CORS(app, origins=[

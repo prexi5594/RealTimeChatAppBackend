@@ -1,3 +1,7 @@
+import jwt
+
+from config import SECRET_KEY
+
 from flask import (
     Blueprint,
     request,
@@ -155,10 +159,15 @@ def login():
     user.is_online = True
     db.session.commit()
 
+    if user.is_banned:
+        return jsonify({"error": "Your account is banned"}), 403
+
     token = create_access_token(
         identity=str(user.id),
         expires_delta=timedelta(days=7)
     )
+
+    token = jwt.encode({"user_id": user.id, "role": user.role}, SECRET_KEY, algorithm="HS256")
 
     return jsonify({
         "message": "Login successful",
@@ -166,7 +175,9 @@ def login():
         "user": {
             "id": user.id,
             "username": user.username,
-            "email": user.email
+            "email": user.email,
+            "is_banned": user.is_banned
+
         }
     }), 200
 
