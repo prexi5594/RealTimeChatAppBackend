@@ -65,3 +65,21 @@ def get_rooms():
         }
         for r in rooms
     ]), 200
+    
+@room_bp.route("/<int:room_id>", methods=["GET"])
+def get_room(room_id):
+
+    room = Room.query.get(room_id)
+
+    if not room:
+        return jsonify({
+            "error": "Room not found"
+        }), 404
+
+    return jsonify({
+        "id": room.id,
+        "name": room.name,
+        "topic": room.topic,
+        "description": room.description
+    }), 200
+    

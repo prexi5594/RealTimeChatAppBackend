@@ -50,3 +50,16 @@ def send_message():
     db.session.add(new_msg)
     db.session.commit()
     return jsonify({"status": "sent"}), 201
+
+
+# delete message route
+@message_bp.route("/<int:message_id>", methods=["DELETE"])
+def delete_message(message_id):
+    msg = Message.query.get(message_id)
+    if not msg:
+        return jsonify({"error": "Message not found"}), 404
+
+    # Soft delete: mark as deleted instead of removing from DB
+    msg.is_deleted = True
+    db.session.commit()
+    return jsonify({"status": "deleted"}), 200
