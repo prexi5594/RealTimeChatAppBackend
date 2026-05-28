@@ -181,7 +181,7 @@ def verify(token):
 # =========================
 # LOGIN (JWT)
 # =========================
-@@auth_bp.route("/login", methods=["POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
 
     data = request.get_json()
