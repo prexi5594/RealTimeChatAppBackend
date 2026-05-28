@@ -21,11 +21,7 @@ app.config.from_object(Config)
 # =========================
 CORS(
     app,
-    resources={r"/*": {"origins": [
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-        "https://realtimechatapp2-vgnu.onrender.com"
-    ]}},
+    resources={r"/*": {"origins": "*"}},
     supports_credentials=True,
     methods=["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"]
