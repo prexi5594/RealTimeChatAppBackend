@@ -11,7 +11,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        "postgresql://prexidaziemorara:password@localhost/chatdb"
+        "postgresql://chat_db_v2_user:O5keeC9K8Qp0ASqy42zFRbDUMytXEuiM@dpg-d86cibm7r5hc739ssilg-a/chat_db_v2"
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
