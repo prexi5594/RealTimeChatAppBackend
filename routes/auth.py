@@ -213,3 +213,51 @@ def verify_otp():
         "token": access_token,
         "user": user.to_dict()
     }), 200
+
+
+# =====================
+# RESEND OTP
+# =====================
+
+
+@auth_bp.route(
+    "/resend-otp",
+    methods=["POST"]
+)
+def resend_otp():
+
+    data = request.get_json() or {}
+
+    email = data.get("email")
+
+    if not email:
+        return jsonify({
+            "error": "Email required"
+        }), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({
+            "error": "User not found"
+        }), 404
+
+    if user.is_verified:
+        return jsonify({
+            "message": "Account already verified. Please login.",
+            "action": "login"
+        }), 200
+
+    otp = generate_otp()
+    user.otp_code = otp
+    db.session.commit()
+
+    try:
+        send_otp_email(mail, email, otp, current_app)
+    except Exception as e:
+        print(f"Error resending OTP email: {str(e)}")
+
+    return jsonify({
+        "message": "Existing account found. OTP resent to your email.",
+        "action": "verify-otp"
+    }), 200
