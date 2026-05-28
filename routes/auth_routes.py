@@ -181,10 +181,11 @@ def verify(token):
 # =========================
 # LOGIN (JWT)
 # =========================
-@auth_bp.route("/login", methods=["POST"])
+@@auth_bp.route("/login", methods=["POST"])
 def login():
 
     data = request.get_json()
+
     email = data.get("email")
     password = data.get("password")
 
@@ -200,22 +201,22 @@ def login():
         return jsonify({"error": "Wrong password"}), 401
 
     if not user.is_verified:
-        return jsonify({"error": "Verify your email first"}), 403
+        return jsonify({
+            "error": "Verify your email first"
+        }), 403
 
+    if user.is_banned:
+        return jsonify({
+            "error": "Your account is banned"
+        }), 403
+
+    # ONLY mark online AFTER all checks pass
     user.is_online = True
     db.session.commit()
 
-    if user.is_banned:
-        return jsonify({"error": "Your account is banned"}), 403
-
     token = create_access_token(
         identity=str(user.id),
-        expires_delta=timedelta(days=7)
-    )
-
-    token = create_access_token(
-        identity=str(user.id),
-        additional_claims={"role": user.role}, # Pass extra data here
+        additional_claims={"role": user.role},
         expires_delta=timedelta(days=7)
     )
 
@@ -227,11 +228,8 @@ def login():
             "username": user.username,
             "email": user.email,
             "is_banned": user.is_banned
-
         }
     }), 200
-
-
 # =========================
 # FORGOT PASSWORD
 # =========================
