@@ -10,6 +10,8 @@ from flask import (
 )
 
 from utils.Helper import send_otp_email
+from werkzeug.security import check_password_hash
+from datetime import timedelta
 
 import random
 
@@ -152,6 +154,55 @@ def register():
         "verify-otp"
 
     }), 201
+
+
+# =====================
+# LOGIN
+# =====================
+
+
+@auth_bp.route(
+    "/login",
+    methods=["POST"]
+)
+def login():
+
+    data = request.get_json() or {}
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "Missing fields"}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if not check_password_hash(user.password, password):
+        return jsonify({"error": "Wrong password"}), 401
+
+    if not user.is_verified:
+        return jsonify({"error": "Verify your account first"}), 403
+
+    if user.is_banned:
+        return jsonify({"error": "Your account is banned"}), 403
+
+    user.is_online = True
+    db.session.commit()
+
+    token = create_access_token(
+        identity=str(user.id),
+        additional_claims={"role": user.role},
+        expires_delta=timedelta(days=7)
+    )
+
+    return jsonify({
+        "message": "Login successful",
+        "token": token,
+        "user": user.to_dict()
+    }), 200
 
 
 # =====================
