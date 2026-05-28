@@ -21,9 +21,9 @@ class Config:
         if DATABASE_URL.startswith("postgres://"):
             DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
 
-        # IMPORTANT: force SSL for Render PostgreSQL
+        # Use prefer instead of require for Render compatibility
         if "?sslmode=" not in DATABASE_URL:
-            DATABASE_URL += "?sslmode=require"
+            DATABASE_URL += "?sslmode=prefer"
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL or "sqlite:///local.db"
 
