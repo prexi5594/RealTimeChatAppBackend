@@ -9,7 +9,7 @@ room_bp = Blueprint(
 )
 
 # CREATE ROOM
-@room_bp.route("", methods=["POST"])
+@room_bp.route("/", methods=["POST"])
 def create_room():
 
     data = request.get_json()
@@ -51,7 +51,7 @@ def create_room():
 
 
 # GET ROOMS
-@room_bp.route("", methods=["GET"])
+@room_bp.route("/", methods=["GET"])
 def get_rooms():
 
     rooms = Room.query.all()
