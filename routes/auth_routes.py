@@ -51,13 +51,53 @@ def register():
     if not username or not email or not password:
         return jsonify({"error": "Missing fields"}), 400
 
-    if User.query.filter_by(email=email).first():
-        return jsonify({"error": "Email already exists"}), 409
+    # CHECK EXISTING EMAIL
+    existing_email = User.query.filter_by(email=email).first()
 
+    if existing_email:
+
+        # USER EXISTS BUT NOT VERIFIED
+        if not existing_email.is_verified:
+
+            serializer = URLSafeTimedSerializer(
+                current_app.config["SECRET_KEY"]
+            )
+
+            token = serializer.dumps(
+                email,
+                salt="verify-email"
+            )
+
+            link = f"https://realtimechatapp2-vgnu.onrender.com/verify/{token}"
+
+            msg = Message(
+                "Verify QuickChat Account",
+                sender=current_app.config["MAIL_USERNAME"],
+                recipients=[email]
+            )
+
+            msg.body = (
+                f"Click the link to verify your account:\n{link}"
+            )
+
+            mail.send(msg)
+
+            return jsonify({
+                "message":
+                "Verification email resent"
+            }), 200
+
+        return jsonify({
+            "error": "Email already exists"
+        }), 409
+
+    # CHECK USERNAME
     if User.query.filter_by(username=username).first():
-        return jsonify({"error": "Username already exists"}), 409
-    
-    
+        return jsonify({
+            "error": "Username already exists"
+        }), 409
+
+    # CREATE USER
     user = User(
         username=username,
         email=email,
@@ -67,12 +107,15 @@ def register():
     db.session.add(user)
     db.session.commit()
 
-    # EMAIL VERIFICATION
+    # SEND VERIFICATION EMAIL
     serializer = URLSafeTimedSerializer(
         current_app.config["SECRET_KEY"]
     )
 
-    token = serializer.dumps(email, salt="verify-email")
+    token = serializer.dumps(
+        email,
+        salt="verify-email"
+    )
 
     link = f"https://realtimechatapp2-vgnu.onrender.com/verify/{token}"
 
@@ -82,13 +125,15 @@ def register():
         recipients=[email]
     )
 
-    msg.body = f"Click the link to verify your account:\n{link}"
+    msg.body = (
+        f"Click the link to verify your account:\n{link}"
+    )
 
     mail.send(msg)
-    
 
     return jsonify({
-        "message": "Check your email to verify account"
+        "message":
+        "Check your email to verify account"
     }), 201
 
 
