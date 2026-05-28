@@ -3,23 +3,47 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Config:
-
+    # =========================
+    # CORE SECURITY
+    # =========================
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret")
 
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-fallback-jwt-key-67890")
+    # =========================
+    # DATABASE (FIXED FOR RENDER + LOCAL)
+    # =========================
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "postgresql://chat_db_v2_user:O5keeC9K8Qp0ASqy42zFRbDUMytXEuiM@dpg-d86cibm7r5hc739ssilg-a/chat_db_v2"
-    )
+    if DATABASE_URL:
+        # Fix Render / old postgres format
+        if DATABASE_URL.startswith("postgres://"):
+            DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
+
+        # IMPORTANT: force SSL for Render PostgreSQL
+        if "?sslmode=" not in DATABASE_URL:
+            DATABASE_URL += "?sslmode=require"
+
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL or "sqlite:///local.db"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # MAIL CONFIG (YOU WERE MISSING THESE)
+    
+    CORS_ORIGINS = [
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "https://realtimechatapp2-vgnu.onrender.com"
+    ]
+
+    # =========================
+    # MAIL CONFIG (GMAIL SMTP)
+    # =========================
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
     MAIL_USE_TLS = True
+
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-    MAIL_DEFAULT_SENDER = os.getenv("MAIL_USERNAME")
+
+    MAIL_DEFAULT_SENDER = MAIL_USERNAME
