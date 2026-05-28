@@ -1,10 +1,9 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_mail import Mail
 
 from config import Config
-from extensions import db
+from extensions import db, mail
 from routes.auth import auth_bp
 from routes.room_routes import room_bp
 from routes.message_routes import message_bp
