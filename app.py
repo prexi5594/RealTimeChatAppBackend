@@ -32,7 +32,7 @@ CORS(
 # =========================
 db.init_app(app)
 jwt = JWTManager(app)
-mail = Mail(app)
+mail.init_app(app)
 
 # =========================
 # BLUEPRINTS ONLY
