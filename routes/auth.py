@@ -1,5 +1,6 @@
 from models.user_model import User
 from extensions import db
+from flask_jwt_extended import create_access_token
 
 from flask import (
     Blueprint,
@@ -146,82 +147,59 @@ def register():
 # =====================
 # VERIFY OTP
 # =====================
+
 @auth_bp.route(
     "/verify-otp",
     methods=["POST"]
 )
 def verify_otp():
 
-    data = (
-        request.get_json()
-        or {}
-    )
+    data = request.get_json() or {}
 
-    email = data.get(
-        "email"
-    )
+    email = data.get("email")
+    otp = data.get("otp")
 
-    otp = data.get(
-        "otp"
-    )
-
-    if (
-        not email
-        or not otp
-    ):
+    if not email or not otp:
         return jsonify({
-            "error":
-            "Missing fields"
+            "error": "Missing fields"
         }), 400
 
-    user = (
-        User.query
-        .filter_by(
-            email=email
-        )
-        .first()
-    )
+    user = User.query.filter_by(
+        email=email
+    ).first()
 
     if not user:
-
         return jsonify({
-            "error":
-            "User not found"
+            "error": "User not found"
         }), 404
 
-    if (
-        user.otp_verified
-    ):
-
+    if user.otp_verified:
         return jsonify({
-            "message":
-            "OTP already verified"
+            "message": "OTP already verified"
         }), 200
 
-    if (
-        user.otp_code
-        != otp
-    ):
-
+    if user.otp_code != otp:
         return jsonify({
-            "error":
-            "Invalid OTP"
+            "error": "Invalid OTP"
         }), 400
 
+    # VERIFY USER
     user.otp_verified = True
-
     user.is_verified = True
-
     user.otp_code = None
 
     db.session.commit()
 
+    # CREATE JWT TOKEN
+    access_token = create_access_token(
+        identity=str(user.id),
+        additional_claims={
+            "role": user.role
+        }
+    )
+
     return jsonify({
-
-        "message":
-        "OTP verified successfully",
-
-        "user":
-        user.to_dict()
-
+        "message": "OTP verified successfully",
+        "token": access_token,
+        "user": user.to_dict()
     }), 200
