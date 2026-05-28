@@ -1,6 +1,6 @@
 import jwt
 
-from config import SECRET_KEY
+from flask import current_app
 
 from flask import (
     Blueprint,
@@ -56,7 +56,8 @@ def register():
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Username already exists"}), 409
-
+    
+    
     user = User(
         username=username,
         email=email,
@@ -84,6 +85,7 @@ def register():
     msg.body = f"Click the link to verify your account:\n{link}"
 
     mail.send(msg)
+    
 
     return jsonify({
         "message": "Check your email to verify account"
@@ -138,7 +140,6 @@ def verify(token):
 def login():
 
     data = request.get_json()
-
     email = data.get("email")
     password = data.get("password")
 
@@ -167,7 +168,11 @@ def login():
         expires_delta=timedelta(days=7)
     )
 
-    token = jwt.encode({"user_id": user.id, "role": user.role}, SECRET_KEY, algorithm="HS256")
+    token = create_access_token(
+        identity=str(user.id),
+        additional_claims={"role": user.role}, # Pass extra data here
+        expires_delta=timedelta(days=7)
+    )
 
     return jsonify({
         "message": "Login successful",

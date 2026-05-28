@@ -13,13 +13,25 @@ from models.user_model import User
 from models.room_model import Room
 from models.message_model import Message
 
+from routes.auth_routes import auth_bp
+from routes.room_routes import room_bp
+from routes.message_routes import message_bp
+
 # =========================
 # APP SETUP
 # =========================
 app = Flask(__name__)
 app.config.from_object(Config)
 
-CORS(app, resources={r"/*": {"origins": "https://realtimechatapp2-vgnu.onrender.com"}}, supports_credentials=True)
+
+## blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(room_bp)
+app.register_blueprint(message_bp)
+
+# Removed the trailing slash from the origin
+CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "DELETE", "OPTIONS"])
+
 
 db.init_app(app)
 jwt = JWTManager(app)
@@ -96,72 +108,6 @@ def get_rooms():
     ]), 200
 
 
-# =========================
-# SEND MESSAGE
-# =========================
-@app.route("/messages", methods=["POST"])
-def send_message():
-    data = request.get_json()
-
-    message = data.get("message")
-    username = data.get("username")
-    room_id = data.get("roomId")  # IMPORTANT FIX
-
-    if not all([message, username, room_id]):
-        return jsonify({"error": "Missing fields"}), 400
-
-    room = Room.query.get(room_id)
-    if not room:
-        return jsonify({"error": "Room not found"}), 404
-
-    msg = Message(
-        message=message,
-        username=username,
-        room_id=room_id,
-        timestamp=datetime.now(timezone.utc),
-        is_deleted=False
-    )
-
-    db.session.add(msg)
-    db.session.commit()
-
-    return jsonify({
-        "message": "sent",
-        "data": {
-            "id": msg.id,
-            "message": msg.message,
-            "username": msg.username,
-            "room_id": msg.room_id,
-            "timestamp": msg.timestamp.isoformat(),
-            "is_deleted": msg.is_deleted
-        }
-    }), 201
-
-
-# =========================
-# GET MESSAGES (ROOM)
-# =========================
-@app.route("/messages/<int:room_id>", methods=["GET"])
-def get_messages(room_id):
-
-    room = Room.query.get(room_id)
-    if not room:
-        return jsonify({"error": "Room not found"}), 404
-
-    messages = Message.query.filter_by(room_id=room_id).all()
-
-    return jsonify([
-        {
-            "id": m.id,
-            "message": m.message,
-            "username": m.username,
-            "room_id": m.room_id,
-            "timestamp": m.timestamp.isoformat(),
-            "is_deleted": m.is_deleted
-        }
-        for m in messages
-    ]), 200
-
 
 # =========================
 # DELETE MESSAGE (SOFT DELETE)
@@ -180,6 +126,8 @@ def delete_message(message_id):
     db.session.commit()
 
     return jsonify({"message": "deleted"}), 200
+
+
 
 
 # =========================
