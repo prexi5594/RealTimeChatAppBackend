@@ -74,7 +74,7 @@ def register():
 
     token = serializer.dumps(email, salt="verify-email")
 
-    link = f"http://localhost:5000/verify/{token}"
+    link = f"https://realtimechatapp2-vgnu.onrender.com/verify/{token}"
 
     msg = Message(
         "Verify QuickChat Account",
@@ -213,7 +213,7 @@ def forgot_password():
 
     token = serializer.dumps(email, salt="reset-password")
 
-    reset_link = f"http://localhost:5173/reset-password/{token}"
+    reset_link = f"https://realtimechatapp2-vgnu.onrender.com/reset-password/{token}"
 
     msg = Message(
         "Reset Password - QuickChat",

@@ -26,11 +26,20 @@ app.config.from_object(Config)
 
 ## blueprints
 app.register_blueprint(auth_bp)
-app.register_blueprint(room_bp)
+app.register_blueprint(room_bp, url_prefix="/rooms")
 app.register_blueprint(message_bp)
 
 # Removed the trailing slash from the origin
-CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "DELETE", "OPTIONS"])
+CORS(
+    app,
+    resources={r"/*": {"origins": [
+        "http://localhost:5174",
+        "https://realtimechatapp2-vgnu.onrender.com"
+    ]}},
+    supports_credentials=True,
+    methods=["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"]
+)
 
 
 db.init_app(app)
