@@ -133,7 +133,9 @@ def register():
 
     return jsonify({
         "message":
-        "Check your email to verify account"
+        "Check your email to verify account",
+        "action":
+        "verify-email"
     }), 201
 
 

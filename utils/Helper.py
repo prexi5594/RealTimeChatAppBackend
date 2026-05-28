@@ -17,10 +17,11 @@ def format_timestamp(timestamp):
     
     return formatted_time
 
-def send_otp_email(email, otp):
+def send_otp_email(mail, email, otp, app_context):
+    from flask_mail import Message
     msg = Message(
         "QuickChat OTP Code",
-        sender=app.config["MAIL_USERNAME"],
+        sender=app_context.config["MAIL_USERNAME"],
         recipients=[email]
     )
 

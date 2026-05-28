@@ -1,12 +1,15 @@
 from models.user_model import User
-from extensions import db
+from extensions import db, mail
 from flask_jwt_extended import create_access_token
 
 from flask import (
     Blueprint,
     request,
-    jsonify
+    jsonify,
+    current_app
 )
+
+from utils.Helper import send_otp_email
 
 import random
 
@@ -127,19 +130,26 @@ def register():
 
     db.session.commit()
 
+    # SEND OTP EMAIL
+    try:
+        send_otp_email(mail, email, otp, current_app)
+    except Exception as e:
+        print(f"Error sending OTP email: {str(e)}")
+        # Continue even if email fails - user can request resend
+
     return jsonify({
 
         "message":
-        "User created",
+        "User created. Check your email for OTP",
 
         "role":
         user.role,
 
-        "otp":
-        otp,
-
         "next":
-        "Verify OTP"
+        "Verify OTP",
+
+        "action":
+        "verify-otp"
 
     }), 201
 

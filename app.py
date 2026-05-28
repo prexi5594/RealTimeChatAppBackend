@@ -5,8 +5,7 @@ from flask_mail import Mail
 
 from config import Config
 from extensions import db
-
-from routes.auth_routes import auth_bp
+from routes.auth import auth_bp
 from routes.room_routes import room_bp
 from routes.message_routes import message_bp
 
