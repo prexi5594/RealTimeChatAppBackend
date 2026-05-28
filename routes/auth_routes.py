@@ -230,6 +230,8 @@ def login():
             "is_banned": user.is_banned
         }
     }), 200
+    
+    
 # =========================
 # FORGOT PASSWORD
 # =========================
