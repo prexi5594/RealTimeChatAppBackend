@@ -1,3 +1,5 @@
+from flask_mail import Message
+
 
 def validate_fields(data, fields):
 
@@ -18,7 +20,7 @@ def format_timestamp(timestamp):
     return formatted_time
 
 def send_otp_email(mail, email, otp, app_context):
-    from flask_mail import Message
+    
 
     try:
         msg = Message(

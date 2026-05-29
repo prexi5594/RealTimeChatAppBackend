@@ -271,35 +271,20 @@ def verify_otp():
 # =====================
 
 
-@auth_bp.route(
-    "/resend-otp",
-    methods=["POST"]
-)
+@auth_bp.route("/resend-otp", methods=["POST"])
 def resend_otp():
 
-    data = request.get_json() or {}
-
+    data = request.get_json()
     email = data.get("email")
 
-    if not email:
-        return jsonify({
-            "error": "Email required"
-        }), 400
+    # generate otp
+    otp = generate_otp()
 
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        return jsonify({
-            "error": "User not found"
-        }), 404
+        return jsonify({"error": "User not found"}), 404
 
-    if user.is_verified:
-        return jsonify({
-            "message": "Account already verified. Please login.",
-            "action": "login"
-        }), 200
-
-    otp = generate_otp()
     user.otp_code = otp
     db.session.commit()
 
