@@ -202,10 +202,6 @@ def login():
     if not check_password_hash(user.password, password):
         return jsonify({"error": "Wrong password"}), 401
 
-    if not user.is_verified:
-        return jsonify({
-            "error": "Verify your email first"
-        }), 403
 
     if user.is_banned:
         return jsonify({

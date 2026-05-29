@@ -19,11 +19,21 @@ def format_timestamp(timestamp):
 
 def send_otp_email(mail, email, otp, app_context):
     from flask_mail import Message
-    msg = Message(
-        "QuickChat OTP Code",
-        sender=app_context.config["MAIL_USERNAME"],
-        recipients=[email]
-    )
 
-    msg.body = f"Your OTP is: {otp}"
-    mail.send(msg)
+    try:
+        msg = Message(
+            "QuickChat OTP Code",
+            sender=app_context.config["MAIL_USERNAME"],
+            recipients=[email]
+        )
+
+        msg.body = f"Your OTP is: {otp}"
+
+        mail.send(msg)
+
+        return True
+
+    except Exception as e:
+        print("EMAIL ERROR:", str(e))
+        return False
+    
