@@ -20,16 +20,15 @@ def format_timestamp(timestamp):
     
     return formatted_time
 
-def send_otp_email(mail, email, otp, app_context):
+def send_otp_email(mail, email, otp, app):
 
-    def send_async(app):
-        with app.app_context():   # 🔥 THIS FIXES YOUR ERROR
-            try:
-                from flask_mail import Message
+    def send_async(app_instance):
+        try:
+            with app_instance.app_context():   
 
                 msg = Message(
                     "QuickChat OTP Code",
-                    sender=app.config["MAIL_USERNAME"],
+                    sender=app_instance.config["MAIL_USERNAME"],
                     recipients=[email]
                 )
 
@@ -38,10 +37,10 @@ def send_otp_email(mail, email, otp, app_context):
 
                 print("OTP email sent successfully")
 
-            except Exception as e:
-                print(f"MAIL ERROR: {str(e)}")
+        except Exception as e:
+            print(f"MAIL ERROR: {str(e)}")
 
     threading.Thread(
         target=send_async,
-        args=(app_context,)
+        args=(app,)
     ).start()

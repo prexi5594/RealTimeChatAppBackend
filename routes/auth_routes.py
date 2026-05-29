@@ -62,7 +62,7 @@ def register():
 
     # send OTP email
     try:
-        send_otp_email(mail, email, otp, current_app)
+        send_otp_email(mail, email, otp, current_app._get_current_object())
     except Exception as e:
         print("OTP EMAIL ERROR:", e)
 
@@ -184,7 +184,7 @@ def resend_otp():
     db.session.commit()
 
     try:
-        send_otp_email(mail, email, otp, current_app)
+        send_otp_email(mail, email, otp, current_app._get_current_object())
     except Exception as e:
         print("RESEND OTP ERROR:", e)
 
