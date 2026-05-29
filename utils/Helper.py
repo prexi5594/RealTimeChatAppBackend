@@ -1,5 +1,5 @@
 from flask_mail import Message
-import threading
+from threading import Thread
 
 
 def validate_fields(data, fields):
@@ -20,27 +20,37 @@ def format_timestamp(timestamp):
     
     return formatted_time
 
-def send_otp_email(mail, email, otp, app):
+def send_async_email(app, mail, msg):
 
-    def send_async(app_instance):
+    with app.app_context():
+
         try:
-            with app_instance.app_context():   
+            mail.send(msg)
 
-                msg = Message(
-                    "QuickChat OTP Code",
-                    sender=app_instance.config["MAIL_USERNAME"],
-                    recipients=[email]
-                )
-
-                msg.body = f"Your OTP is: {otp}"
-                mail.send(msg)
-
-                print("OTP email sent successfully")
+            print("EMAIL SENT SUCCESSFULLY")
 
         except Exception as e:
-            print(f"MAIL ERROR: {str(e)}")
 
-    threading.Thread(
-        target=send_async,
-        args=(app,)
+            print("EMAIL FAILED:", str(e))
+
+
+def send_otp_email(app, mail, email, otp):
+
+    msg = Message(
+        subject="QuickChat OTP Code",
+        sender=app.config["MAIL_USERNAME"],
+        recipients=[email]
+    )
+
+    msg.body = f"""
+Your QuickChat OTP Code is:
+
+{otp}
+
+This code expires soon.
+"""
+
+    Thread(
+        target=send_async_email,
+        args=(app, mail, msg)
     ).start()
