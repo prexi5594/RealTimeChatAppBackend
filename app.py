@@ -15,17 +15,17 @@ from routes.message_routes import message_bp
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# =========================
-# CORS FIX (IMPORTANT)
-# =========================
+
 CORS(
     app,
-    resources={r"/*": {"origins": "*"}},
+    resources={r"/*": {"origins": [
+        "http://localhost:5174",
+        "https://realtimechatapp2-vgnu.onrender.com"
+    ]}},
     supports_credentials=True,
     methods=["GET", "POST", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"]
 )
-
 # =========================
 # EXTENSIONS
 # =========================
