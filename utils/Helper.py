@@ -31,9 +31,7 @@ def send_otp_email(mail, email, otp, app_context):
 
         mail.send(msg)
 
-        return True
+        print("OTP email sent successfully")
 
     except Exception as e:
-        print("EMAIL ERROR:", str(e))
-        return False
-    
+        print(f"MAIL ERROR: {str(e)}")
