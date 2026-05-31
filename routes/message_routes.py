@@ -12,7 +12,7 @@ message_bp = Blueprint("messages", __name__, url_prefix="/messages")
 def get_messages(room_id):
     messages = Message.query.filter_by(
         room_id=room_id,
-        is_deleted=False   
+           
     ).all()
 
     return jsonify([
