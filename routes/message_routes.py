@@ -10,7 +10,11 @@ message_bp = Blueprint("messages", __name__, url_prefix="/messages")
 # 2. Explicit Routes
 @message_bp.route("/<int:room_id>", methods=["GET"])
 def get_messages(room_id):
-    messages = Message.query.filter_by(room_id=room_id).all()
+    messages = Message.query.filter_by(
+        room_id=room_id,
+        is_deleted=False   
+    ).all()
+
     return jsonify([
         {
             "id": m.id,
