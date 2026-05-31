@@ -3,6 +3,20 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def fix_db_url(url):
+    if not url:
+        return None
+
+    
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://")
+
+   
+    if "sslmode" not in url:
+        url += "?sslmode=require"
+
+    return url
+
 
 class Config:
 
@@ -15,12 +29,17 @@ class Config:
     # =========================
     # DATABASE
     # =========================
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
-    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = fix_db_url(os.getenv("DATABASE_URL"))
+    
+    if not DATABASE_URL:
+        raise Exception("DATABASE_URL is missing!")
+    if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
+        
+    if "sslmode" not in DATABASE_URL:
+        DATABASE_URL += "?sslmode=require"
 
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL or "sqlite:///local.db"
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # =========================
@@ -33,7 +52,7 @@ class Config:
     ]
 
     # =========================
-    # SENDGRID EMAIL (IMPORTANT)
+    # EMAIL (SendGrid)
     # =========================
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
     MAIL_FROM = os.getenv("MAIL_FROM")

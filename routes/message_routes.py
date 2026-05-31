@@ -25,31 +25,42 @@ def get_messages(room_id):
 def send_message():
     if request.method == "OPTIONS":
         return jsonify({}), 200
-        
-    data = request.get_json()
-    # Debug print to see if request body is empty
-    print("DEBUG DATA RECEIVED:", data) 
-    
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
-        
-    message = data.get("message")
-    username = data.get("username")
-    room_id = data.get("room_id")
 
-    if not all([message, username, room_id]):
-        return jsonify({"error": "Missing fields"}), 400
+    try:
+        data = request.get_json()
+        print("DEBUG DATA RECEIVED:", data)
 
-    new_msg = Message(
-        message=message,
-        username=username,
-        room_id=room_id,
-        timestamp=datetime.now(timezone.utc),
-        is_deleted=False
-    )
-    db.session.add(new_msg)
-    db.session.commit()
-    return jsonify({"status": "sent"}), 201
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        message = data.get("message")
+        username = data.get("username")
+        room_id = data.get("room_id")
+
+        if not all([message, username, room_id]):
+            return jsonify({"error": "Missing fields"}), 400
+
+       
+        room = Room.query.get(room_id)
+        if not room:
+            return jsonify({"error": "Room does not exist"}), 404
+
+        new_msg = Message(
+            message=message,
+            username=username,
+            room_id=room_id,
+            timestamp=datetime.now(timezone.utc),
+            is_deleted=False
+        )
+
+        db.session.add(new_msg)
+        db.session.commit()
+
+        return jsonify({"status": "sent"}), 201
+
+    except Exception as e:
+        print("MESSAGE ERROR:", str(e))
+        return jsonify({"error": "Internal server error"}), 500
 
 
 # delete message route
