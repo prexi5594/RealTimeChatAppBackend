@@ -9,8 +9,11 @@ room_bp = Blueprint(
 )
 
 # CREATE ROOM
-@room_bp.route("/", methods=["POST"])
+@room_bp.route("", methods=["POST, OPTIONS"], strict_slashes=False)
 def create_room():
+    
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
 
     data = request.get_json()
 
@@ -36,6 +39,7 @@ def create_room():
         description=description
     )
 
+    
     db.session.add(room)
     db.session.commit()
 
