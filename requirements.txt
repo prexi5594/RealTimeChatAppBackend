@@ -1,6 +1,7 @@
-setuptools==79.0.1
 blinker==1.8.2
+cffi==1.17.1
 click==8.1.8
+cryptography==47.0.0
 Flask==3.0.3
 Flask-Cors==5.0.0
 Flask-JWT-Extended==4.6.0
@@ -14,10 +15,13 @@ Jinja2==3.1.6
 MarkupSafe==2.1.5
 packaging==26.2
 psycopg2-binary==2.9.10
+pycparser==2.23
 PyJWT==2.9.0
 python-dotenv==1.0.1
+python-http-client==3.3.7
+pytz==2026.2
+sendgrid==6.12.5
 SQLAlchemy==2.0.50
 typing_extensions==4.13.2
 Werkzeug==3.0.6
 zipp==3.20.2
-sendgrid==6.11.0
