@@ -37,6 +37,8 @@ def send_async_email(app, mail, msg):
         except Exception as e:
 
             print("OTP EMAIL ERROR:", str(e))
+            
+            print(traceback.format_exc())
 
 
 def send_otp_email(app, mail, email, otp):

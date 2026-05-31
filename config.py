@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+import traceback
+from flask_mail import Message
 
 load_dotenv()
 
