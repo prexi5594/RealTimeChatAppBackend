@@ -10,6 +10,7 @@ from extensions import db, mail
 from routes.auth_routes import auth_bp
 from routes.room_routes import room_bp
 from routes.message_routes import message_bp
+from routes.admin_routes import admin_bp
 
 
 # =========================
@@ -45,6 +46,7 @@ mail.init_app(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(room_bp)
 app.register_blueprint(message_bp)
+app.register_blueprint(admin_bp)
 
 # =========================
 # HEALTH CHECK
