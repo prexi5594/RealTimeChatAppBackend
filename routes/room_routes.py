@@ -9,9 +9,9 @@ room_bp = Blueprint(
 )
 
 # CREATE ROOM
-@room_bp.route("", methods=["POST, OPTIONS"], strict_slashes=False)
+@room_bp.route("", methods=["POST", "OPTIONS"], strict_slashes=False)
 def create_room():
-    
+
     if request.method == "OPTIONS":
         return jsonify({}), 200
 
@@ -22,24 +22,14 @@ def create_room():
     description = data.get("description")
 
     if not name:
-        return jsonify({
-            "error": "Room name required"
-        }), 400
+        return jsonify({"error": "Room name required"}), 400
 
     existing = Room.query.filter_by(name=name).first()
-
     if existing:
-        return jsonify({
-            "error": "Room already exists"
-        }), 400
+        return jsonify({"error": "Room already exists"}), 400
 
-    room = Room(
-        name=name,
-        topic=topic,
-        description=description
-    )
+    room = Room(name=name, topic=topic, description=description)
 
-    
     db.session.add(room)
     db.session.commit()
 
