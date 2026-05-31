@@ -1,5 +1,7 @@
-from flask_mail import Message
-from threading import Thread
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+import traceback
 
 
 def validate_fields(data, fields):
@@ -24,45 +26,34 @@ def format_timestamp(timestamp):
     return formatted_time
 
 
-def send_async_email(app, mail, msg):
+def send_otp_email(email, otp):
+    """
+    Send OTP using SendGrid (production safe)
+    """
 
-    with app.app_context():
+    api_key = os.getenv("SENDGRID_API_KEY")
+    sender = os.getenv("MAIL_FROM")
 
-        try:
+    if not api_key:
+        raise Exception("SENDGRID_API_KEY is missing")
 
-            mail.send(msg)
+    if not sender:
+        raise Exception("MAIL_FROM is missing")
 
-            print("EMAIL SENT SUCCESSFULLY")
-
-        except Exception as e:
-
-            print("OTP EMAIL ERROR:", str(e))
-            
-            print(traceback.format_exc())
-
-
-def send_otp_email(app, mail, email, otp):
-
-    msg = Message(
-        subject="QuickChat OTP Code",
-
-        sender=app.config.get(
-            "MAIL_USERNAME"
-        ),
-
-        recipients=[email]
+    message = Mail(
+        from_email=sender,
+        to_emails=email,
+        subject="QuickChat OTP Verification",
+        plain_text_content=f"Your OTP code is: {otp}"
     )
 
-    msg.body = (
-        f"Your OTP code is: {otp}"
-    )
+    try:
+        sg = SendGridAPIClient(api_key)
+        response = sg.send(message)
 
-    Thread(
-        target=send_async_email,
+        print("SENDGRID STATUS:", response.status_code)
 
-        args=(
-            app,
-            mail,
-            msg
-        )
-    ).start()
+    except Exception as e:
+        print("SENDGRID ERROR:", str(e))
+        print(traceback.format_exc())
+        raise
