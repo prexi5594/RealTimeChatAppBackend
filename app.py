@@ -28,6 +28,8 @@ CORS(
         "https://realtimechatapp2-vgnu.onrender.com"
     ]}},
     supports_credentials=True,
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"]
 )
 
 # =========================
