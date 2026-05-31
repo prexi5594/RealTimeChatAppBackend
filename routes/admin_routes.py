@@ -72,7 +72,7 @@ def get_rooms():
     return jsonify(data)
 
 # DELETE ROOM
-@admin_bp.route("/rooms/<int:room_id>", methods=["DELETE"])
+@admin_bp.route("admin/rooms/<int:room_id>", methods=["DELETE"])
 @token_required
 @admin_required
 def delete_room(room_id):
