@@ -29,17 +29,21 @@ class Config:
     # =========================
     # DATABASE
     # =========================
-    DATABASE_URL = fix_db_url(os.getenv("DATABASE_URL"))
-    
-    if not DATABASE_URL:
-        raise Exception("DATABASE_URL is missing!")
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
-        
-    if "sslmode" not in DATABASE_URL:
-        DATABASE_URL += "?sslmode=require"
+    raw_db = os.getenv("DATABASE_URL")
 
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL 
+    if not raw_db:
+        SQLALCHEMY_DATABASE_URI = "sqlite:///local.db"
+    else:
+        raw_db = raw_db.strip()
+
+        if raw_db.startswith("postgres://"):
+            raw_db = raw_db.replace("postgres://", "postgresql+psycopg2://", 1)
+
+        if raw_db.startswith("postgresql://"):
+            raw_db = raw_db.replace("postgresql://", "postgresql+psycopg2://", 1)
+
+        SQLALCHEMY_DATABASE_URI = raw_db
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # =========================

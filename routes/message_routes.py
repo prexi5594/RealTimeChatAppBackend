@@ -21,7 +21,7 @@ def get_messages(room_id):
         } for m in messages
     ]), 200
 
-@message_bp.route("/", methods=["POST", "OPTIONS"], strict_slashes=False)
+@message_bp.route("", methods=["POST", "OPTIONS"], strict_slashes=False)
 def send_message():
     if request.method == "OPTIONS":
         return jsonify({}), 200
