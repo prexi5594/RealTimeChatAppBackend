@@ -1,45 +1,27 @@
-from app import app
-from extensions import db
+from app import app, db
 from models.room_model import Room
 
-rooms_to_create = [
-    {
-        "id": 1,
-        "name": "General",
-        "topic": "Welcome",
-        "description": "Default room"
-    },
-    {
-        "id": 2,
-        "name": "Sports",
-        "topic": "Sports & Athletics",
-        "description": "Discuss football, basketball, tennis, and more!"
-    },
-    {
-        "id": 3,
-        "name": "Politics",
-        "topic": "Politics & Government",
-        "description": "Political discussions and debates"
-    },
-    {
-        "id": 4,
-        "name": "Fashion",
-        "topic": "Fashion & Style",
-        "description": "Latest trends, tips, and fashion advice"
-    }
+rooms = [
+    {"name": "General", "topic": "Welcome", "description": "Default chat room"},
+    {"name": "Sports", "topic": "Sports & Athletics", "description": "Discuss football, basketball, tennis, and more!"},
+    {"name": "Politics", "topic": "Politics & Government", "description": "Political discussions and debates"},
+    {"name": "Fashion", "topic": "Fashion & Style", "description": "Latest trends and style talk"},
 ]
 
 with app.app_context():
-    for room_data in rooms_to_create:
-        existing = Room.query.get(room_data["id"])
+    for r in rooms:
+        exists = Room.query.filter_by(name=r["name"]).first()
 
-        if not existing:
-            room = Room(**room_data)
+        if not exists:
+            room = Room(
+                name=r["name"],
+                topic=r["topic"],
+                description=r["description"]
+            )
             db.session.add(room)
-            print(f"Added {room.name}")
+            print(f"Added: {r['name']}")
         else:
-            print(f"{existing.name} already exists")
+            print(f"Already exists: {r['name']}")
 
     db.session.commit()
-
-print("Database seeding finished.")
+    print(" Seeding complete")
