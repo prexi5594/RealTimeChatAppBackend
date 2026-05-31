@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 from extensions import db
 from models.message_model import Message
 from models.room_model import Room
-from datetime import datetime, timezone
+from datetime import datetime
+import pytz
 
 # 1. Define Blueprint with prefix
 message_bp = Blueprint("messages", __name__, url_prefix="/messages")
@@ -53,7 +54,7 @@ def send_message():
             message=message,
             username=username,
             room_id=room_id,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(pytz.timezone("Africa/Nairobi")),
             is_deleted=False
         )
 
